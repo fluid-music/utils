@@ -14,7 +14,7 @@ relative to the current working directory.
 
 console.warn(usage);
 
-// Create a generic method for recursively walking a file tree
+// "walk" is a generic function for recursively walking a file tree
 const dirsToSkip = ['node_modules', '.git'];
 const extsToGet = ['.wav', 'aiff', '.aif',]; // '.m4a', '.mp3', '.ogg'];
 const walk = async (dirname, takeAction = v=>console.log(v)) => {
@@ -36,8 +36,7 @@ const getAndHandleReport = async (filename) => {
   try {
     const metadata = await mm.parseFile(filename);
     const audioFilePath = path.relative(cwd, filename);
-    let key = path.basename(filename);
-    if (key.indexOf('.') !== -1) key = key.slice(0, key.lastIndexOf('.'));
+    const key = path.basename(filename);
 
     if (results.hasOwnProperty(key)) {
       console.warn(`WARNING: omitting non-unique (${key}) filename: ${audioFilePath}`);
@@ -74,6 +73,8 @@ promise.then(() => {
   writer.write('module.exports = ');
   writer.write(JSON.stringify(results, null, 2));
   writer.write('\n');
+}).catch((e) => {
+  throw e;
 }).finally(() => {
   console.warn('COMPLETE');
 });

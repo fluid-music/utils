@@ -14,7 +14,7 @@ The `.format` property is provided by the [music-metadata](https://www.npmjs.com
 
 ```javascript
 module.exports = {
-  "kick-acoustic-001": { // key is the base filename with no extension
+  "kick-acoustic-001.wav": { // key is the base filename with no extension
     "format": {
       "tagTypes": [],
       "trackInfo": [],
