@@ -10,12 +10,12 @@ common.js file containing meta data about the files.
 The metadata for each file includes a ".path" property which will be specified
 relative to the current working directory.
 
-The `.format` property is provided by the [music-metadata](https://www.npmjs.com/package/music-metadata) npm package.
+The `.info` property structure is determined by [music-metadata](https://www.npmjs.com/package/music-metadata)'s `.format` field.
 
 ```javascript
 module.exports = {
   "kick-acoustic-001.wav": { // key is the base filename
-    "format": {
+    "info": {
       "tagTypes": [],
       "trackInfo": [],
       "container": "WAVE",

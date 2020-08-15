@@ -28,21 +28,21 @@ const walk = async (dirname, takeAction = v=>console.log(v)) => {
   }
 };
 
-// getAndHandleReport requests audio file properties from music-metadata, and
+// getAndHandleReport requests audio file information from music-metadata, and
 // adds them to the `results` object.
 const cwd     = process.cwd();
 const results = {}
 const getAndHandleReport = async (filename) => {
   try {
-    const metadata = await mm.parseFile(filename);
-    const audioFilePath = path.relative(cwd, filename);
-    const key = path.basename(filename);
+    const metadata     = await mm.parseFile(filename);
+    const relativePath = path.relative(cwd, filename);
+    const key          = path.basename(filename);
 
     if (results.hasOwnProperty(key)) {
-      console.warn(`WARNING: omitting non-unique (${key}) filename: ${audioFilePath}`);
+      console.warn(`WARNING: omitting non-unique (${key}) filename: ${relativePath}`);
     } else {
-      results[key] = { path: audioFilePath, format: metadata.format };
-      console.warn('FOUND:', audioFilePath);
+      results[key] = { path: relativePath, info: metadata.format };
+      console.warn('FOUND:', relativePath);
     }
   } catch(e) {
     console.error(e);
