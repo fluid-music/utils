@@ -1,6 +1,11 @@
 # Fluid Music Utilities
 
-CLI tools for create `fluid-music` recipes.
+This installs several CLI helper tools for creating `fluid-music` recipes.
+
+Use `npm install -g @fluid-music/utils` to install:
+
+- `sample-scan`
+- `make-nlib`
 
 ## `sample-scan`
 
