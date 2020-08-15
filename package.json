@@ -16,13 +16,18 @@
   "author": "Charles Holbrow",
   "license": "MIT",
   "bin": {
-    "sample-scan": "sample-scan.js"
+    "sample-scan": "sample-scan.js",
+    "make-nlib": "make-nlib.js"
   },
   "bugs": {
     "url": "https://github.com/CharlesHolbrow/fluid-music-utils/issues"
   },
   "homepage": "https://github.com/CharlesHolbrow/fluid-music-utils#readme",
   "dependencies": {
-    "music-metadata": "^7.0.1"
+    "death": "^1.1.0",
+    "jzz": "^1.0.9",
+    "midi-help": "^1.0.0",
+    "music-metadata": "^7.0.1",
+    "sharp11": "^2.0.2"
   }
 }
