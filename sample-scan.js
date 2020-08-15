@@ -1,15 +1,12 @@
 #!/usr/bin/env node
-const path  = require('path');
-const fs    = require('fs');
-const fluid = require('.');
+const path = require('path');
+const fs   = require('fs');
+const mm   = require('music-metadata');
 
 const usage = `sample-scan [search-dir=.] [outfile.js]
 
 sample-scan recursively searches "search-dir" for audio files, and generates a
 common.js file containing meta data about the files.
-
-"cybr" must be running on the default port for this to work, because sample-scan
-doesn't actually read files, it just requests the meta data from cybr.
 
 The metadata for each file includes a ".path" property which will be specified
 relative to the current working directory.
@@ -27,36 +24,27 @@ const walk = async (dirname, takeAction = v=>console.log(v)) => {
     const stats = await fs.promises.lstat(name);
     // Skip symbolic links to mitigate the risk of an infinite loop
     if (!stats.isSymbolicLink() && stats.isDirectory() && dirsToSkip.indexOf(file) === -1) await walk(name, takeAction);
-    if (stats.isFile() && extsToGet.indexOf(path.extname(name).toLowerCase()) !== -1) await takeAction(name);    
+    if (stats.isFile() && extsToGet.indexOf(path.extname(name).toLowerCase()) !== -1) await takeAction(name);
   }
 };
 
-const client = new fluid.Client();
-client.connect(true);
-
-// getAndHandleReport requests audio file properties from cybr, and puts it
-// into the `results` object.
+// getAndHandleReport requests audio file properties from music-metadata, and
+// adds them to the `results` object.
 const cwd     = process.cwd();
 const results = {}
 const getAndHandleReport = async (filename) => {
   try {
-    const result = await client.send(fluid.audiofile.report(filename));
-    if (result.args.length < 2 || result.args[0].value) {
-      console.error("ERROR:", filename, result.args);
-      return;
+    const metadata = await mm.parseFile(filename);
+    const audioFilePath = path.relative(cwd, filename);
+    let key = path.basename(filename);
+    if (key.indexOf('.') !== -1) key = key.slice(0, key.lastIndexOf('.'));
+
+    if (results.hasOwnProperty(key)) {
+      console.warn(`WARNING: omitting non-unique (${key}) filename: ${audioFilePath}`);
+    } else {
+      results[key] = { path: audioFilePath, format: metadata.format };
+      console.warn('FOUND:', audioFilePath);
     }
-    const report = JSON.parse(result.args[1].value);
-
-    // We want a path relative to the working directory. Remove other paths that
-    // might be confusing.
-    report.path = path.relative(cwd, report.absolutePath); 
-    if (report.hasOwnProperty('givenPath')) delete report.givenPath;
-    if (report.hasOwnProperty('absolutePath')) delete report.absolutePath;
-
-    const key = path.basename(report.path.slice(0, -path.extname(report.path).length));
-    if (results.hasOwnProperty(key)) console.warn(`WARNING: omitting non-unique (${key}) filename: ${report.path}`);
-    else results[key] = report;
-    console.warn(report.path);
   } catch(e) {
     console.error(e);
   }
@@ -86,7 +74,6 @@ promise.then(() => {
   writer.write('module.exports = ');
   writer.write(JSON.stringify(results, null, 2));
   writer.write('\n');
-  console.warn('COMPLETE');
 }).finally(() => {
-  client.close();
+  console.warn('COMPLETE');
 });
