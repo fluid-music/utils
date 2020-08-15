@@ -1,0 +1,28 @@
+{
+  "name": "@fluid-music/utils",
+  "version": "0.0.1",
+  "description": "CLI Helpers for building fluid music recipes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CharlesHolbrow/fluid-music-utils.git"
+  },
+  "keywords": [
+    "fluid-music"
+  ],
+  "author": "Charles Holbrow",
+  "license": "MIT",
+  "bin": {
+    "sample-scan": "sample-scan.js"
+  },
+  "bugs": {
+    "url": "https://github.com/CharlesHolbrow/fluid-music-utils/issues"
+  },
+  "homepage": "https://github.com/CharlesHolbrow/fluid-music-utils#readme",
+  "dependencies": {
+    "music-metadata": "^7.0.1"
+  }
+}
