@@ -7,7 +7,7 @@ const onDeath       = require('death');
 const ChordAnalyzer = require('./Analyzer.js');
 
 // write the output to this file
-const defaultFilename = 'nLibrary.js';
+const defaultFilename = 'n-library.js';
 const filename = process.argv[2] || defaultFilename;
 
 // This main output stream will be split, and sent to both stdout and a file
@@ -26,7 +26,7 @@ const analyzer = new ChordAnalyzer(outputStream);
 
 onDeath(() => {
   fileStream.write(analyzer.jsonStrings.join(',\n'));
-  fileStream.write(`\n}\n\nmodule.exports.nLibrary = nLibrary\n`);
+  fileStream.write(`\n}\n\nmodule.exports = nLibrary\n`);
   fileStream.once('finish', () => process.exit());
   fileStream.end();
 });

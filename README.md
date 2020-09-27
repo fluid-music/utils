@@ -43,7 +43,7 @@ module.exports = {
 
 ## `make-nlib`
 
-A super simple way to create nLibraries containing chords with a MIDI keyboard.
+A super simple way to create `nLibrary` objects containing chords with a MIDI keyboard.
 
 ```
 $ npm install -g @fluid-music/utils
@@ -74,5 +74,5 @@ const nLibrary = {
   },
 };
 
-module.exports.nLibrary = nLibrary;
+module.exports = nLibrary;
 ```
