@@ -9,7 +9,7 @@ function createLetterGetter() {
 }
 
 class ChordAnalyzer {
-  constructor(writableStream) {
+  constructor() {
 
     // s11 does not include a way to lookup notes by their midi note number.
     // I'll make that possible here via the midiNotes object, which indexes beginning at 24
@@ -26,10 +26,11 @@ class ChordAnalyzer {
     this.midiNotesDown = {};
     this.lastChord = { s11Notes: [], name: '' };
     this.letterGetter = createLetterGetter();
+    this.jsonStrings = [];
 
     this.parser.on('noteOn', (note, velocity, channel) =>{
       if (velocity === 0) {
-        console.log('converting noteOn with v=0 to noteOff');
+        console.warn('converting noteOn with v=0 to noteOff');
         parser.emit('noteOff', note, velocity, channel);
         return;
       }
@@ -57,16 +58,20 @@ class ChordAnalyzer {
     });
 
     this.parser.on('chord', (chord) => {
-      writableStream.write('\r' + chord.name + '             ');
+      process.stderr.write('\r' + chord.name + '             ');
     });
 
     this.parser.on('lastChord', (chord) => {
-      writableStream.write('\r                             \r');
-      writableStream.write(`  "${this.letterGetter()}": {
-    type: "midiChord",
-    name: "${chord.name}",
-    notes: ${util.inspect(chord.midiNoteNums)},
-  },\n`);
+      process.stderr.write('\r                             \r');
+
+      const str = `  ${this.letterGetter()}: {
+    type: 'midiChord',
+    name: '${chord.name}',
+    notes: [${chord.midiNoteNums.join(', ')}]
+  }`;
+
+      console.log(str + ',');
+      this.jsonStrings.push(str);
     });
   }
 }

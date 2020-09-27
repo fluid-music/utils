@@ -16,17 +16,21 @@ const fileStream   = fs.createWriteStream(filename);
 outputStream.pipe(process.stdout);
 outputStream.pipe(fileStream);
 
-console.log(
+console.warn(
 `Usage: $ make-nlib out.js # (Currently writing to "${filename}")`);
 
 // Setup the header and footer
 fileStream.write(`const nLibrary = {\n`)
-onDeath(() => {
-  fileStream.write(`};\n\nmodule.exports.nLibrary = nLibrary;\n`);
-  process.exit();
-});
 
 const analyzer = new ChordAnalyzer(outputStream);
+
+onDeath(() => {
+  fileStream.write(analyzer.jsonStrings.join(',\n'));
+  fileStream.write(`\n}\n\nmodule.exports.nLibrary = nLibrary\n`);
+  fileStream.once('finish', () => process.exit());
+  fileStream.end();
+});
+
 
 // Annoying Midi Boilerplate
 if (!navigator.requestMIDIAccess) {
@@ -52,8 +56,8 @@ if (!navigator.requestMIDIAccess) {
         /* Fires when MIDI devices plugged and unplugged */
       }
     }
-    console.log(''); // newline
+    console.warn();(''); // newline
   }, (reason)=> {
-    console.log('failed to get midi access:', reason);
+    console.warn('failed to get midi access:', reason);
   });
 };
