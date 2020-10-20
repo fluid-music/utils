@@ -5,7 +5,7 @@ This installs several CLI helper tools for creating `fluid-music` recipes.
 Use `npm install -g @fluid-music/utils` to install:
 
 - `sample-scan`
-- `make-nlib`
+- `transcribe-chords`
 
 ## `sample-scan`
 
@@ -41,14 +41,14 @@ module.exports = {
 }
 ```
 
-## `make-nlib`
+## `transcribe-chords`
 
-A super simple way to create `nLibrary` objects containing chords with a MIDI keyboard.
+A super quick way to transcribe midi chords in JSON using a midi keyboard.
 
 ```
 $ npm install -g @fluid-music/utils
-$ make-nlib output.js
-Usage: $ make-nlib out.js # (Currently writing to "output.js")
+$ transcribe-chords chords.js
+Usage: $ transcribe-chords out.js # (Currently writing to "chords.js")
 connected: "Midi Through Port-0"
 connected: "MPK Mini Mk II MIDI 1"
 ```
@@ -56,23 +56,37 @@ connected: "MPK Mini Mk II MIDI 1"
 Now play some chords on any connected midi device to generate a file like the one below (use `ctrl+c` to stop recording).
 
 ```javascript
-const nLibrary = {
-  "a": {
-    type: "midiChord",
+const chords = [
+  {
     name: "Cm",
     notes: [ 60, 63, 67 ],
   },
-  "b": {
-    type: "midiChord",
+  {
     name: "Ab",
     notes: [ 56, 60, 63 ],
   },
-  "c": {
-    type: "midiChord",
+  {
     name: "Bb",
     notes: [ 58, 62, 65 ],
   },
-};
+];
 
-module.exports = nLibrary;
+module.exports = chords;
+```
+
+If you are using the fluid engine, you can create a `tLibrary` like this
+
+```javascript
+const fluid = require('fluid-music')
+const chords = require('./midi-chords')
+
+const techniques = chords.map(chord => new fluid.techniques.MidiChord(chord))
+const tLibrary = fluid.tLibrary.fromArray(techniques)
+
+// tLibrary will look like this:
+{
+  a: MidiChord({ name: 'Cm', notes: [60, 63, 67] }),
+  b: MidiChord({ name: 'Ab', notes: [56, 60, 63] }),
+  c: MidiChord({ name: 'Bb', notes: [58, 62, 65] })
+}
 ```

@@ -17,7 +17,7 @@
   "license": "MIT",
   "bin": {
     "sample-scan": "sample-scan.js",
-    "make-nlib": "make-nlib.js"
+    "transcribe-chords": "transcribe-chords.js"
   },
   "bugs": {
     "url": "https://github.com/CharlesHolbrow/fluid-music-utils/issues"

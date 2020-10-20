@@ -7,7 +7,7 @@ const onDeath       = require('death');
 const ChordAnalyzer = require('./Analyzer.js');
 
 // write the output to this file
-const defaultFilename = 'n-library.js';
+const defaultFilename = 'midi-chords.js';
 const filename = process.argv[2] || defaultFilename;
 
 // This main output stream will be split, and sent to both stdout and a file
@@ -17,16 +17,16 @@ outputStream.pipe(process.stdout);
 outputStream.pipe(fileStream);
 
 console.warn(
-`Usage: $ make-nlib out.js # (Currently writing to "${filename}")`);
+`Usage: $ transcribe-chords out.js # (Currently writing to "${filename}")`);
 
 // Setup the header and footer
-fileStream.write(`const nLibrary = {\n`)
+fileStream.write(`const chords = [\n`)
 
 const analyzer = new ChordAnalyzer(outputStream);
 
 onDeath(() => {
   fileStream.write(analyzer.jsonStrings.join(',\n'));
-  fileStream.write(`\n}\n\nmodule.exports = nLibrary\n`);
+  fileStream.write(`\n]\n\nmodule.exports = chords\n`);
   fileStream.once('finish', () => process.exit());
   fileStream.end();
 });
@@ -56,7 +56,7 @@ if (!navigator.requestMIDIAccess) {
         /* Fires when MIDI devices plugged and unplugged */
       }
     }
-    console.warn();(''); // newline
+    console.warn(''); // newline
   }, (reason)=> {
     console.warn('failed to get midi access:', reason);
   });

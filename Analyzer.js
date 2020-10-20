@@ -2,11 +2,6 @@ const help = require('midi-help');
 const s11 = require('sharp11');
 const util = require('util');
 
-function createLetterGetter() {
-  const s = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let i = 0;
-  return () => s[i++ % s.length];
-}
 
 class ChordAnalyzer {
   constructor() {
@@ -25,7 +20,6 @@ class ChordAnalyzer {
     this.parser = new help.MidiParser();
     this.midiNotesDown = {};
     this.lastChord = { s11Notes: [], name: '' };
-    this.letterGetter = createLetterGetter();
     this.jsonStrings = [];
 
     this.parser.on('noteOn', (note, velocity, channel) =>{
@@ -64,8 +58,7 @@ class ChordAnalyzer {
     this.parser.on('lastChord', (chord) => {
       process.stderr.write('\r                             \r');
 
-      const str = `  ${this.letterGetter()}: {
-    type: 'midiChord',
+      const str = `  {
     name: '${chord.name}',
     notes: [${chord.midiNoteNums.join(', ')}]
   }`;
