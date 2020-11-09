@@ -1,6 +1,6 @@
 {
   "name": "@fluid-music/utils",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "CLI Helpers for building fluid music recipes",
   "main": "index.js",
   "scripts": {
