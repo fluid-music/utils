@@ -16,7 +16,7 @@ console.warn(usage);
 
 // "walk" is a generic function for recursively walking a file tree
 const dirsToSkip = ['node_modules', '.git'];
-const extsToGet = ['.wav', 'aiff', '.aif',]; // '.m4a', '.mp3', '.ogg'];
+const extsToGet = ['.wav', 'aiff', '.aif', '.mp3']; // '.m4a', '.ogg'];
 const walk = async (dirname, takeAction = v=>console.log(v)) => {
   const files = await fs.promises.readdir(dirname);
   for (const file of files) {
