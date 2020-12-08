@@ -2,6 +2,7 @@
 const path = require('path');
 const fs   = require('fs');
 const mm   = require('music-metadata');
+const walk = require('./common').walk
 
 const usage = `sample-scan [search-dir=.] [outfile.js]
 
@@ -13,20 +14,6 @@ relative to the current working directory.
 `
 
 console.warn(usage);
-
-// "walk" is a generic function for recursively walking a file tree
-const dirsToSkip = ['node_modules', '.git'];
-const extsToGet = ['.wav', 'aiff', '.aif', '.mp3']; // '.m4a', '.ogg'];
-const walk = async (dirname, takeAction = v=>console.log(v)) => {
-  const files = await fs.promises.readdir(dirname);
-  for (const file of files) {
-    let name = path.join(dirname, file);
-    const stats = await fs.promises.lstat(name);
-    // Skip symbolic links to mitigate the risk of an infinite loop
-    if (!stats.isSymbolicLink() && stats.isDirectory() && dirsToSkip.indexOf(file) === -1) await walk(name, takeAction);
-    if (stats.isFile() && extsToGet.indexOf(path.extname(name).toLowerCase()) !== -1) await takeAction(name);
-  }
-};
 
 // getAndHandleReport requests audio file information from music-metadata, and
 // adds them to the `results` object.
