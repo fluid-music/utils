@@ -57,11 +57,11 @@ module.exports = `
 // Handle the specialized deep object that created in the run method.
 let indentLevel = 0
 let indent = () => new Array(indentLevel).fill('  ').join('')
-function handleInfoAndRelativePathMap(map) {
+function handleInfoAndRelativePathMap(dirMap) {
 
   result += '{\n'
   indentLevel++
-  map.forEach((obj, baseName) => {
+  dirMap.forEach((obj, baseName) => {
     if (obj instanceof Map && !obj.size) return
 
     result +=  `${indent()}${JSON.stringify(baseName)}: `
@@ -77,11 +77,28 @@ function handleInfoAndRelativePathMap(map) {
   result += indent()+ '}' + (indentLevel ? ',' : ';') + '\n'
 }
 
+/** Does this dirMap have any audio files in any of its children */
+const hasAudioFile = (dirMap) => {
+  for (const [key, obj] of dirMap.entries()) {
+    if (!(obj instanceof Map) || hasAudioFile(obj)) return true
+  }
+  return false
+}
+/** Remove all empty child dirMaps */
+function pruneEmptyDirs(dirMap) {
+  for (const [key, obj] of dirMap.entries()) {
+    if (obj instanceof Map) {
+      if (!hasAudioFile(obj)) dirMap.delete(key)
+      else pruneEmptyDirs(obj)
+    }
+  }
+}
+
 const pathsRelativeTo = path.dirname(path.resolve(outFile))
 async function run() {
-  // Create a specialized deep object representing the directory structure with:
+  // Create a deep 'dirMap' object representing the directory structure with:
   //     - Map objects for directories
-  //     - JavaScript objects for files
+  //     - JavaScript objects for audio files
   //
   // For example:
   // Map({
@@ -103,7 +120,7 @@ async function run() {
     if (process.platform === 'win32') relativePath = relativePath.split(path.sep).join(path.posix.sep)
     return { info, relativePath }
   })
-
+  pruneEmptyDirs(dirMap)
   handleInfoAndRelativePathMap(dirMap)
   return result
 }
