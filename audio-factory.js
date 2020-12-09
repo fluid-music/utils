@@ -7,26 +7,27 @@ const mm    = require('music-metadata');
 const walk  = require('./common').walk
 
 if (process.argv.length < 3) {
-  console.warn(chalk`{green Usage:} {bold $ afactory ./search/dir [outfile='audio-files.js']}
+  console.warn(chalk`{green.bold.underline Usage}
+{bold $ afactory ./search/dir [outfile='audio-files.js']}
 
 Recursively searches a directory for audio files, and generates a fluid-music
 AudioFile technique for each audio file it finds. The output techniques will be
 written to a common.js formatted JavaScript file which exports a deeply nested
 JavaScript object reflecting the input directory structure.
 
-{green Example:}
+{green.bold.underline Example}
 Assume your working directory contains the following files:
 {bold ./drums/snare.wav
 ./drums/hi-hat/close.wav
 ./drums/hi-hat/open.wav}
 
-1. Run {bold afactory} from the working directory:
+{green.bold (1)} Run {bold afactory} from the working directory:
 
-{bold $ afactory ./ audio.js}
+{bold $ afactory ./}
 
-2. This creates {bold audio.js}, which looks like this:
-` +
+{green.bold (2)} This creates {bold audio-files.js}, which looks like this:` +
 chalk.bold(`
+// audio-files.js
 const { AudioFile } = require('fluid-music').techniques
 module.exports = {
   "drums": {
@@ -38,9 +39,17 @@ module.exports = {
   },
 };
 `) + chalk`
-3. You can how {bold require('./audio.js')}, to access the exported
-objects, using them to manually create fluid-music tLibraries.
-`)
+{green.bold (3)} You can now {bold require('./audio-files.js')}, to access the exported
+objects, using them to create fluid-music tLibrary objects:` +
+chalk.bold(`
+// main.js
+const audioFiles = require('./audio-files')
+const tLibrary = {
+  's': audioFiles.drums['snare.wav'],
+  'h': audioFiles.drums['hi-hat']['close.wav'],
+  'H': audioFiles.drums['hi-hat']['open.wav],
+}
+`))
   process.exit()
 }
 
