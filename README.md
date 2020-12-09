@@ -46,8 +46,8 @@ module.exports = {
   },
 };
 ```
-**Step: 3** You can now `require('./audio.js')`, to access the
-exported objects, using them to manually create fluid-music tLibraries.
+**Step 3:** You can now `require('./audio.js')`, to access the exported objects,
+using them to manually create fluid-music `tLibrary` objects.
 
 
 ## `transcribe-chords`
