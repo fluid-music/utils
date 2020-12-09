@@ -4,42 +4,51 @@ This installs several CLI helper tools for creating `fluid-music` recipes.
 
 Use `npm install -g @fluid-music/utils` to install:
 
-- `sample-scan`
+- `afactory`
 - `transcribe-chords`
 
-## `sample-scan`
+## `afactory`
 
-`$ sample-scan [search-dir=.] [outfile.js]`
+Recursively searches a directory for audio files, and generates a fluid-music
+AudioFile technique for each audio file it finds. The output techniques will be
+written to a common.js formatted JavaScript file which exports a deeply nested
+JavaScript object reflecting the input directory structure.
 
-sample-scan recursively searches "search-dir" for audio files, and generates a
-common.js file containing meta data about the files.
+### Usage:
 
-The metadata for each file includes a ".path" property which will be specified
-relative to the current working directory.
+`$ afactory ./search/dir [outfile='audio-files.js']`
 
-The `.info` property structure is determined by [music-metadata](https://www.npmjs.com/package/music-metadata)'s `.format` field.
+### Example:
+Assume your working directory contains the following files:
 
-```javascript
-module.exports = {
-  "kick-acoustic-001.wav": { // key is the base filename
-    "info": {
-      "tagTypes": [],
-      "trackInfo": [],
-      "container": "WAVE",
-      "codec": "PCM",
-      "bitsPerSample": 16,
-      "sampleRate": 44100,
-      "numberOfChannels": 1,
-      "bitrate": 88200,
-      "lossless": true,
-      "numberOfSamples": 52919,
-      "duration": 1.1999773242630385
-    },
-    "path": "../fluid-music-kit/media/kick-acoustic-001.wav"
-  },
-  "kick-acoustic-002": { /* ... */ }
-}
 ```
+./drums/snare.wav
+./drums/hi-hat/close.wav
+./drums/hi-hat/open.wav
+```
+
+**Step 1:** Run `afactory` from the working directory:
+
+```
+$ afactory ./ audio.js
+```
+
+**Step 2:** This creates `audio.js`, which looks like this:
+```javascript
+const { AudioFile } = require('fluid-music').techniques
+module.exports = {
+  "drums": {
+    "snare.wav":   new AudioFile({ /* init options */ }),
+    "hi-hat": {
+      "close.wav": new AudioFile({ /* init options */ }),
+      "open.wav":  new AudioFile({ /* init options */ }),
+    },
+  },
+};
+```
+**Step: 3** You can now `require('./audio.js')`, to access the
+exported objects, using them to manually create fluid-music tLibraries.
+
 
 ## `transcribe-chords`
 

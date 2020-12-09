@@ -1,7 +1,48 @@
-const fs   = require('fs')
-const path = require('path')
-const mm   = require('music-metadata');
-const walk = require('./common').walk
+#!/usr/bin/env node
+
+const fs    = require('fs')
+const path  = require('path')
+const chalk = require('chalk')
+const mm    = require('music-metadata');
+const walk  = require('./common').walk
+
+if (process.argv.length < 3) {
+  console.warn(chalk`{green Usage:} {bold $ afactory ./search/dir [outfile='audio-files.js']}
+
+Recursively searches a directory for audio files, and generates a fluid-music
+AudioFile technique for each audio file it finds. The output techniques will be
+written to a common.js formatted JavaScript file which exports a deeply nested
+JavaScript object reflecting the input directory structure.
+
+{green Example:}
+Assume your working directory contains the following files:
+{bold ./drums/snare.wav
+./drums/hi-hat/close.wav
+./drums/hi-hat/open.wav}
+
+1. Run {bold afactory} from the working directory:
+
+{bold $ afactory ./ audio.js}
+
+2. This creates {bold audio.js}, which looks like this:
+` +
+chalk.bold(`
+const { AudioFile } = require('fluid-music').techniques
+module.exports = {
+  "drums": {
+    "snare.wav":   new AudioFile({ /* init options */ }),
+    "hi-hat": {
+      "close.wav": new AudioFile({ /* init options */ }),
+      "open.wav":  new AudioFile({ /* init options */ }),
+    },
+  },
+};
+`) + chalk`
+3. You can how {bold require('./audio.js')}, to access the exported
+objects, using them to manually create fluid-music tLibraries.
+`)
+  process.exit()
+}
 
 const args       = process.argv.slice(2);
 const searchPath = path.resolve(args[0] || '.');
@@ -17,9 +58,12 @@ module.exports = `
 let indentLevel = 0
 let indent = () => new Array(indentLevel).fill('  ').join('')
 function handleInfoAndRelativePathMap(map) {
+
   result += '{\n'
   indentLevel++
   map.forEach((obj, baseName) => {
+    if (obj instanceof Map && !obj.size) return
+
     result +=  `${indent()}${JSON.stringify(baseName)}: `
     if (obj instanceof Map)  {
       handleInfoAndRelativePathMap(obj)
@@ -65,7 +109,7 @@ async function run() {
 }
 
 run().then(() => {
-  console.log(result)
+  fs.createWriteStream(outFile).write(result)
 }).catch(e => {
   console.error('walk error:', e)
 })

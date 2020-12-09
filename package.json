@@ -16,6 +16,7 @@
   "author": "Charles Holbrow",
   "license": "MIT",
   "bin": {
+    "afactory": "audio-factory.js",
     "sample-scan": "sample-scan.js",
     "transcribe-chords": "transcribe-chords.js"
   },
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/CharlesHolbrow/fluid-music-utils#readme",
   "dependencies": {
+    "chalk": "^4.1.0",
     "death": "^1.1.0",
     "jzz": "^1.0.9",
     "midi-help": "^1.0.0",
