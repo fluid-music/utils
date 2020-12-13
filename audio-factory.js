@@ -60,7 +60,8 @@ const stats      = fs.lstatSync(searchPath);
 if (!stats.isDirectory()) throw new Error('search path is not a directory:', searchPath)
 
 let result = 
-`const { AudioFile } = require('fluid-music').techniques
+`const path = require('path')
+const { AudioFile } = require('fluid-music').techniques
 module.exports = `
 
 // Handle the specialized deep object that created in the run method.
