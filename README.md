@@ -33,7 +33,7 @@ Assume your working directory contains the following files:
 $ afactory ./ audio.js
 ```
 
-**Step 2:** This creates `audio.js`, which looks like this:
+**Step 2:** `afactory` will create an `audio.js` file, which looks like this:
 ```javascript
 const { AudioFile } = require('fluid-music').techniques
 module.exports = {
@@ -65,37 +65,41 @@ connected: "MPK Mini Mk II MIDI 1"
 Now play some chords on any connected midi device to generate a file like the one below (use `ctrl+c` to stop recording).
 
 ```javascript
-const chords = [
-  {
-    name: "Cm",
-    notes: [ 60, 63, 67 ],
-  },
-  {
-    name: "Ab",
-    notes: [ 56, 60, 63 ],
-  },
-  {
-    name: "Bb",
-    notes: [ 58, 62, 65 ],
-  },
-];
+const fluid = require('fluid-music')
+const { MidiChord } = fluid.techniques
 
-module.exports = chords;
+const chords = [
+  new MidiChord({
+    name: 'Gm',
+    notes: [55, 58, 62],
+  }),
+
+  new MidiChord({
+    name: 'Bbsus4',
+    notes: [58, 60, 63, 65],
+  }),
+
+  new MidiChord({
+    name: 'Cm',
+    notes: [60, 63, 67],
+  }),
+]
+
+module.exports = chords
 ```
 
-If you are using the fluid engine, you can create a `tLibrary` like this
+You can create a `tLibrary` like this:
 
 ```javascript
 const fluid = require('fluid-music')
 const chords = require('./midi-chords')
 
-const techniques = chords.map(chord => new fluid.techniques.MidiChord(chord))
 const tLibrary = fluid.tLibrary.fromArray(techniques)
 
 // tLibrary will look like this:
 {
-  a: MidiChord({ name: 'Cm', notes: [60, 63, 67] }),
-  b: MidiChord({ name: 'Ab', notes: [56, 60, 63] }),
-  c: MidiChord({ name: 'Bb', notes: [58, 62, 65] })
+  a: MidiChord({ name: 'Gm',     notes: [55, 58, 62] }),
+  b: MidiChord({ name: 'Bbsus4', notes: [58, 60, 63, 65] })
+  c: MidiChord({ name: 'Cm',     notes: [60, 63, 67] }),
 }
 ```
