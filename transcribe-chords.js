@@ -20,7 +20,11 @@ console.warn(
 `Usage: $ transcribe-chords out.js # (Currently writing to "${filename}")`);
 
 // Setup the header and footer
-fileStream.write(`const chords = [\n`)
+fileStream.write(`
+const fluid = require('fluid-music')
+const { MidiChord } = fluid.techniques
+
+const chords = [\n`)
 
 const analyzer = new ChordAnalyzer(outputStream);
 

@@ -58,10 +58,11 @@ class ChordAnalyzer {
     this.parser.on('lastChord', (chord) => {
       process.stderr.write('\r                             \r');
 
-      const str = `  {
+      const str = `
+  new MidiChord({
     name: '${chord.name}',
-    notes: [${chord.midiNoteNums.join(', ')}]
-  }`;
+    notes: [${chord.midiNoteNums.join(', ')}],
+  })`;
 
       console.log(str + ',');
       this.jsonStrings.push(str);
